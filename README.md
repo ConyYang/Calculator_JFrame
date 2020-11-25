@@ -1,4 +1,7 @@
 # Java Caculator
+###
+Demo
+![demo](assets/video.gif)
 ### Intro
 A calculator can be implemented from these 3 parts:
 A simple graphical interface needs to be composed of 
@@ -31,3 +34,4 @@ and the output column.
 
 Our main panel looks like this:
 ![panel](assets/calculator.png)
+

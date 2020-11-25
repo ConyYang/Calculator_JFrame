@@ -254,7 +254,7 @@ public class Calculator {
         // set where this window appears in the screen
         myframe.setLocation(300, 200);
         // set window cannot be resize
-        myframe.setResizable(false);
+        myframe.setResizable(true);
 
         // set pan1 layout
         pan1.setLayout(new GridLayout(4, 4, 5, 5));
