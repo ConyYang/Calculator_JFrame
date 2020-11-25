@@ -2,6 +2,11 @@ package com.yangyubei.calculator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -10,8 +15,8 @@ public class Calculator {
     JFrame myframe = new JFrame("Calculator");
 
     // set initial value to make project safe
-    String num1 = "0";
-    String num2 = "0";
+    String num1 = "";
+    String num2 = "";
     String operand = "+";
     String result = "";
 
@@ -60,7 +65,191 @@ public class Calculator {
     // Create JPanel
     JPanel pan1 = new JPanel();
     JPanel pan2 = new JPanel();
-    
+
+    class Listner_int implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Get event source, and get entered data.
+            String ss = ((JButton) e.getSource()).getText();
+
+            // read stored operand and add to vt
+            store = (JButton) e.getSource();
+            vt.add(store);
+
+            if (s1_write_dir ==1 ){
+                if (s3_clear_num1==1){
+                    num1 = "";
+                    // recover s5
+                    s5_control_dot = 1;
+                }
+                num1 = num1 +ss;
+                s3_clear_num1 +=1;
+                //display result
+                result_TextField.setText(num1);
+
+            } else if (s1_write_dir==2){
+                if (s4_clear_num2==1){
+                    num2 = "";
+                    // recover s5
+                    s5_control_dot = 1;
+                }
+                num2 = num2 +ss;
+                s4_clear_num2 +=1;
+                //display result
+                result_TextField.setText(num2);
+            }
+
+        }
+    }
+
+    class Listner_decimal implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            store = (JButton) e.getSource();
+            vt.add(store);
+
+            if (s5_control_dot==1){
+                String ss2 = ((JButton) e.getSource()).getText();
+
+                if (s1_write_dir ==1 ){
+                    if (s3_clear_num1==1){
+                        num1 = "";
+                        // recover s5
+                        s5_control_dot = 1;
+                    }
+                    num1 = num1 +ss2;
+                    s3_clear_num1 +=1;
+                    //display result
+                    result_TextField.setText(num1);
+
+                } else if (s1_write_dir==2){
+                    if (s4_clear_num2==1){
+                        num2 = "";
+                        // recover s5
+                        s5_control_dot = 1;
+                    }
+                    num2 = num2 +ss2;
+                    s4_clear_num2 +=1;
+                    //display result
+                    result_TextField.setText(num2);
+                }
+            }
+        }
+    }
+
+    class Listner_operand implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String ss2 = ((JButton) e.getSource()).getText();
+            store = (JButton) e.getSource();
+            vt.add(store);
+
+            if (s2_num_operand == 1){
+                s1_write_dir = 2;
+                s5_control_dot = 1;
+                operand = ss2;
+                s2_num_operand += 1;
+            } else{
+                int a = vt.size();
+                JButton c = (JButton) vt.get(a-2);
+                if (!(c.getText().equals("+"))
+                        && !(c.getText().equals("-"))
+                        && !(c.getText().equals("*"))
+                        && !(c.getText().equals("/")))
+                {
+                    cal();
+                    num1 = result;
+                    s1_write_dir = 1;
+                    s5_control_dot = 1;
+                    s4_clear_num2 = 1;
+                    operand = ss2;
+                }
+                s2_num_operand +=1;
+            }
+        }
+    }
+
+    class Listner_result implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            store = (JButton) e.getSource();
+            vt.add(store);
+            cal();
+
+            s1_write_dir = 1;
+            s2_num_operand = 1;
+            s3_clear_num1 = 1;
+            s4_clear_num2 = 1;
+
+            num1 = result;
+        }
+    }
+
+    class Listner_clear implements ActionListener{
+
+        @SuppressWarnings("unchcked")
+        public void actionPerformed(ActionEvent e) {
+            store = (JButton) e.getSource();
+            vt.add(store);
+
+            s1_write_dir = 1;
+            s2_num_operand = 1;
+            s3_clear_num1 = 1;
+            s4_clear_num2 = 1;
+            s5_control_dot = 1;
+
+            num1 = "";
+            num2 = "";
+            operand = "+";
+            result = "";
+            result_TextField.setText(result);
+            vt.clear();
+        }
+    }
+
+    public void cal(){
+        double a2;
+        double b2;
+
+        String op = operand;
+        if (op.equals("")){
+            result_TextField.setText("Please Input Operators");
+        }else {
+            if (num1.equals("."))
+                num1 = "0.0";
+            if (num2.equals("."))
+                num2 = "0.0";
+
+            a2 = Double.valueOf(num1).doubleValue();
+            b2 = Double.valueOf(num2).doubleValue();
+
+            double result2 = 0;
+
+            if (op.equals("+")) {
+                result2 = a2 + b2;
+            }
+            if (op.equals("-")) {
+                result2 = a2 - b2;
+            }
+            if (op.equals("*")) {
+                BigDecimal m1 = new BigDecimal(Double.toString(a2));
+                BigDecimal m2 = new BigDecimal(Double.toString(b2));
+                result2 = m1.multiply(m2).doubleValue();
+            }
+            if (op.equals("/")){
+                if (b2 == 0) {
+                    result2 = 0;
+                } else {
+                    result2 = a2 / b2;
+                }
+            }
+
+            result = ((new Double(result2)).toString());
+            result_TextField.setText(result);
+        }
+    }
+
     public Calculator(){
         // set where this window appears in the screen
         myframe.setLocation(300, 200);
@@ -108,7 +297,43 @@ public class Calculator {
         myframe.pack();
         myframe.setVisible(true);
 
+        Listner_result lr = new Listner_result();
+        b_result.addActionListener(lr);
+
+        Listner_int li = new Listner_int();
+        b0.addActionListener(li);
+        b1.addActionListener(li);
+        b2.addActionListener(li);
+        b3.addActionListener(li);
+        b4.addActionListener(li);
+        b5.addActionListener(li);
+        b6.addActionListener(li);
+        b7.addActionListener(li);
+        b8.addActionListener(li);
+        b9.addActionListener(li);
+
+        Listner_operand lo = new Listner_operand();
+        b_add.addActionListener(lo);
+        b_minus.addActionListener(lo);
+        b_multi.addActionListener(lo);
+        b_divide.addActionListener(lo);
+
+        Listner_clear lc = new Listner_clear();
+        clear_Button.addActionListener(lc);
+
+        Listner_decimal ld = new Listner_decimal();
+        b_dot.addActionListener(ld);
+
+        myframe.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                System.exit(0);
+            }
+        });
     }
 }
+
+
 
 
